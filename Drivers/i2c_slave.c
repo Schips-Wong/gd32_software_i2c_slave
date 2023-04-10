@@ -2,7 +2,7 @@
 // \license The MIT License (MIT)
 //
 // \brief
-//	software simulation I2C slave device
+//  software simulation I2C slave device
 //
 // \version
 // v1.0.0: 2023.04.10, Initial version.
@@ -54,34 +54,34 @@ B2. 如果状态机为ACK状态，I2C通信处于应答阶段，如果是主机�
 //#define i2c_debug(format,...)
 #define i2c_debug printf
 
-#define I2C_STA_IDLE			0
-#define I2C_STA_START			1
-#define I2C_STA_DATA			2
-#define I2C_STA_ACK				3
-#define I2C_STA_NACK			4
-#define I2C_STA_STOP			5
+#define I2C_STA_IDLE            0
+#define I2C_STA_START           1
+#define I2C_STA_DATA            2
+#define I2C_STA_ACK             3
+#define I2C_STA_NACK            4
+#define I2C_STA_STOP            5
 
-#define I2C_READ				1
-#define I2C_WRITE				0
+#define I2C_READ                1
+#define I2C_WRITE               0
 
-#define GPIO_DIR_IN				0
-#define GPIO_DIR_OUT			1
+#define GPIO_DIR_IN             0
+#define GPIO_DIR_OUT            1
 #define PIN_LOW  RESET
 #define PIN_HIGH SET
 
-#define SW_SLAVE_ADDR			(SW_SLAVE_ADDR_7BIT << 1)
+#define SW_SLAVE_ADDR           (SW_SLAVE_ADDR_7BIT << 1)
 
 struct SwSlaveI2C
 {
-	uint8_t State;					// I2C通信状态
-	uint8_t Rw;						// I2C读写标志：0-写，1-读
-	uint8_t SclFallCnt;				// SCL下降沿计数
-	uint8_t Flag;					// I2C状态标志，BIT0：0-地址无效，1-地址匹配
-	uint32_t StartMs;				// I2C通信起始时间，单位ms，用于判断通信是否超时
-	uint8_t* RxBuf;					// 指向接收缓冲区的指针
-	uint8_t* TxBuf;					// 指向发送缓冲区的指针
-	uint8_t RxIdx;					// 接收缓冲区数据写入索引，最大值255
-	uint8_t TxIdx;					// 发送缓冲区数据读取索引，最大值255
+    uint8_t State;                  // I2C通信状态
+    uint8_t Rw;                     // I2C读写标志：0-写，1-读
+    uint8_t SclFallCnt;             // SCL下降沿计数
+    uint8_t Flag;                   // I2C状态标志，BIT0：0-地址无效，1-地址匹配
+    uint32_t StartMs;               // I2C通信起始时间，单位ms，用于判断通信是否超时
+    uint8_t* RxBuf;                 // 指向接收缓冲区的指针
+    uint8_t* TxBuf;                 // 指向发送缓冲区的指针
+    uint8_t RxIdx;                  // 接收缓冲区数据写入索引，最大值255
+    uint8_t TxIdx;                  // 发送缓冲区数据读取索引，最大值255
 };
 
 
@@ -91,15 +91,15 @@ static uint8_t data_for_main_read[MAX_I2C_BUFF_SIZE] = {0xa1, 0xb2, 0xc3, 0xd4, 
 
 static struct SwSlaveI2C SwSlaveI2C =
 {
-	I2C_STA_IDLE,		      // State
-	I2C_WRITE,			      // Rw
-	0, 					      // SclFallCnt
-	0,					      // Flag
-	0,					      // StartMs
-	info_when_main_send,	  // RxBuf（每次i2c通信时，所变化的内容）
-	data_for_main_read,		  // TxBuf（每次i2cget时，发送出去的内容）
-	0,					      // RxIdx
-	0					      // TxIdx
+    I2C_STA_IDLE,             // State
+    I2C_WRITE,                // Rw
+    0,                        // SclFallCnt
+    0,                        // Flag
+    0,                        // StartMs
+    info_when_main_send,      // RxBuf（每次i2c通信时，所变化的内容）
+    data_for_main_read,       // TxBuf（每次i2cget时，发送出去的内容）
+    0,                        // RxIdx
+    0                         // TxIdx
 };
 
 #define CHECK_PORTING
@@ -112,17 +112,17 @@ static struct SwSlaveI2C SwSlaveI2C =
 #define SW_SLAVE_SCL_EXTI_LINE             EXTI_8
 #define SW_SLAVE_SCL_EXTI_PORT_SOURCE      EXTI_SOURCE_GPIOB
 #define SW_SLAVE_SCL_EXTI_PIN_SOURCE       EXTI_SOURCE_PIN8
-#define SW_SLAVE_SCL_EXTI_IRQn             EXTI5_9_IRQn 
-    
+#define SW_SLAVE_SCL_EXTI_IRQn             EXTI5_9_IRQn
 
-#define SW_SLAVE_SDA_PORT		           GPIOB
-#define SW_SLAVE_SDA_PIN		           GPIO_PIN_9
+
+#define SW_SLAVE_SDA_PORT                  GPIOB
+#define SW_SLAVE_SDA_PIN                   GPIO_PIN_9
 #define SW_SLAVE_SDA_CLK                   RCU_GPIOB
 #define SW_SLAVE_SDA_EXTI_LINE             EXTI_9
 #define SW_SLAVE_SDA_EXTI_PORT_SOURCE      EXTI_SOURCE_GPIOB
 #define SW_SLAVE_SDA_EXTI_PIN_SOURCE       EXTI_SOURCE_PIN9
-#define SW_SLAVE_SDA_EXTI_IRQn             EXTI5_9_IRQn  
-    
+#define SW_SLAVE_SDA_EXTI_IRQn             EXTI5_9_IRQn
+
 
 
 /*!
@@ -271,26 +271,26 @@ CHECK_PORTING int get_sda_state(void)
 // 该函数需要在主流程中调用。
 void i2c_sw_check_timeout(void)
 {
-	uint32_t TimeMs, TimeCurMs;
+    uint32_t TimeMs, TimeCurMs;
 
-	if(SwSlaveI2C.State != I2C_STA_IDLE)
-	{
-		TimeCurMs = get_i2c_tick();
-		if(TimeCurMs >= SwSlaveI2C.StartMs)
-		{
-			TimeMs = TimeCurMs - SwSlaveI2C.StartMs;
-		}
-		else
-		{
-			TimeMs = ~(SwSlaveI2C.StartMs - TimeCurMs) + 1;
-		}
-		if(500 >= TimeMs)
-		{
-			// I2C通信超时的话，重置状态机，并把SDA设置成输入
-			SwSlaveI2C.State = I2C_STA_IDLE;
+    if(SwSlaveI2C.State != I2C_STA_IDLE)
+    {
+        TimeCurMs = get_i2c_tick();
+        if(TimeCurMs >= SwSlaveI2C.StartMs)
+        {
+            TimeMs = TimeCurMs - SwSlaveI2C.StartMs;
+        }
+        else
+        {
+            TimeMs = ~(SwSlaveI2C.StartMs - TimeCurMs) + 1;
+        }
+        if(500 >= TimeMs)
+        {
+            // I2C通信超时的话，重置状态机，并把SDA设置成输入
+            SwSlaveI2C.State = I2C_STA_IDLE;
             set_sda_dir(GPIO_DIR_IN);
-		}
-	}
+        }
+    }
     delay_1ms(50); // 要保证主循环内，要有足够的延迟来防止I2C通信超时
 }
 
@@ -375,154 +375,154 @@ void i2c_sw_action_after_done(void)
 // 在中断入口函数中调用模拟I2C从机的GPIO口中断处理函数i2c_sw_gpio_exti_isr()。
 void i2c_sw_gpio_exti_isr(void)
 {
-	// 处理SCL的上下沿中断
-	if(is_scl_trig())
-	{
-		clr_scl_rtig_it();
-		// 更新通信起始时间
-		SwSlaveI2C.StartMs = get_i2c_tick();
-		// SCL的下降沿事件处理，此时需要更新要传输的数据
-		if(get_scl_state() == PIN_LOW)
-		{
-			switch(SwSlaveI2C.State)
-			{
-				case I2C_STA_START:		// 起始信号的下降沿，初始化相关参数并转到接收比特数据状态
-					SwSlaveI2C.SclFallCnt = 0;
-					SwSlaveI2C.TxIdx = SwSlaveI2C.RxBuf[1]; // For Read
-					SwSlaveI2C.RxIdx = 0;
-					SwSlaveI2C.Flag = 0;	// 默认地址不匹配
-					SwSlaveI2C.RxBuf[SwSlaveI2C.RxIdx] = 0;
-					SwSlaveI2C.Rw = I2C_WRITE;	// 第1字节为设备地址，一定是写入
-					SwSlaveI2C.State = I2C_STA_DATA;
-					break;
-				case I2C_STA_DATA:
-					SwSlaveI2C.SclFallCnt++;
-					if(8 > SwSlaveI2C.SclFallCnt)
-					{
-						// 如果是主机读取数据，则在SCL低电平时更新比特数据
-						if(SwSlaveI2C.Rw == I2C_READ)
-						{
-							if(SwSlaveI2C.TxBuf[SwSlaveI2C.TxIdx] & (1 << (7 - SwSlaveI2C.SclFallCnt)))
-							{
-								set_sda_pin();
-							}
-							else
-							{
-								clr_sda_pin();
-							}
-						}
-					}
-					else if(8 == SwSlaveI2C.SclFallCnt)
-					{
-						if(SwSlaveI2C.Rw == I2C_WRITE)
-						{
-							// 从第一个地址字节中获取读写标志位，并判断地址是否匹配
-							if(SwSlaveI2C.RxIdx == 0)
-							{
-								if((SwSlaveI2C.RxBuf[0] & 0xFE) == (SW_SLAVE_ADDR_7BIT << 1))
-								{
-									SwSlaveI2C.Flag = 1;	// 地址匹配
-									SwSlaveI2C.Rw = SwSlaveI2C.RxBuf[0] & 0x01;
-								}
-							}
-							if(SwSlaveI2C.Flag)
-							{
-								// 如果是主机写入数据，且地址匹配，则接收完8比特数据后，需要发送ACK信号进行应答
+    // 处理SCL的上下沿中断
+    if(is_scl_trig())
+    {
+        clr_scl_rtig_it();
+        // 更新通信起始时间
+        SwSlaveI2C.StartMs = get_i2c_tick();
+        // SCL的下降沿事件处理，此时需要更新要传输的数据
+        if(get_scl_state() == PIN_LOW)
+        {
+            switch(SwSlaveI2C.State)
+            {
+                case I2C_STA_START:     // 起始信号的下降沿，初始化相关参数并转到接收比特数据状态
+                    SwSlaveI2C.SclFallCnt = 0;
+                    SwSlaveI2C.TxIdx = SwSlaveI2C.RxBuf[1]; // For Read
+                    SwSlaveI2C.RxIdx = 0;
+                    SwSlaveI2C.Flag = 0;    // 默认地址不匹配
+                    SwSlaveI2C.RxBuf[SwSlaveI2C.RxIdx] = 0;
+                    SwSlaveI2C.Rw = I2C_WRITE;  // 第1字节为设备地址，一定是写入
+                    SwSlaveI2C.State = I2C_STA_DATA;
+                    break;
+                case I2C_STA_DATA:
+                    SwSlaveI2C.SclFallCnt++;
+                    if(8 > SwSlaveI2C.SclFallCnt)
+                    {
+                        // 如果是主机读取数据，则在SCL低电平时更新比特数据
+                        if(SwSlaveI2C.Rw == I2C_READ)
+                        {
+                            if(SwSlaveI2C.TxBuf[SwSlaveI2C.TxIdx] & (1 << (7 - SwSlaveI2C.SclFallCnt)))
+                            {
+                                set_sda_pin();
+                            }
+                            else
+                            {
+                                clr_sda_pin();
+                            }
+                        }
+                    }
+                    else if(8 == SwSlaveI2C.SclFallCnt)
+                    {
+                        if(SwSlaveI2C.Rw == I2C_WRITE)
+                        {
+                            // 从第一个地址字节中获取读写标志位，并判断地址是否匹配
+                            if(SwSlaveI2C.RxIdx == 0)
+                            {
+                                if((SwSlaveI2C.RxBuf[0] & 0xFE) == (SW_SLAVE_ADDR_7BIT << 1))
+                                {
+                                    SwSlaveI2C.Flag = 1;    // 地址匹配
+                                    SwSlaveI2C.Rw = SwSlaveI2C.RxBuf[0] & 0x01;
+                                }
+                            }
+                            if(SwSlaveI2C.Flag)
+                            {
+                                // 如果是主机写入数据，且地址匹配，则接收完8比特数据后，需要发送ACK信号进行应答
                                 set_sda_output_value(PIN_LOW);
-							}
-						}
-						else
-						{
-							// 如果是主机读取数据，需要将SDA设置成输入以便判断应答标志位状态
+                            }
+                        }
+                        else
+                        {
+                            // 如果是主机读取数据，需要将SDA设置成输入以便判断应答标志位状态
                             set_sda_dir(GPIO_DIR_IN);
-							// 如果是主机读取数据，准备发送下一个字节的数据
+                            // 如果是主机读取数据，准备发送下一个字节的数据
                             SwSlaveI2C.TxIdx++;
                             if(SwSlaveI2C.TxIdx >= MAX_I2C_BUFF_SIZE - 1)
                             {
                                 SwSlaveI2C.TxIdx = 0;
                             }
-						}
-						// 接收或发送完8比特数据后，准备发送或接收应答信号
-						SwSlaveI2C.State = I2C_STA_ACK;
-					}
-					break;
-				case I2C_STA_ACK:
-					SwSlaveI2C.SclFallCnt = 0;
-					if(SwSlaveI2C.Rw == I2C_WRITE)
-					{
-						// 如果是主机写入数据，且ACK发送完毕，则SDA设置成输入，继续接收数据
+                        }
+                        // 接收或发送完8比特数据后，准备发送或接收应答信号
+                        SwSlaveI2C.State = I2C_STA_ACK;
+                    }
+                    break;
+                case I2C_STA_ACK:
+                    SwSlaveI2C.SclFallCnt = 0;
+                    if(SwSlaveI2C.Rw == I2C_WRITE)
+                    {
+                        // 如果是主机写入数据，且ACK发送完毕，则SDA设置成输入，继续接收数据
                         set_sda_dir(GPIO_DIR_IN);
-						SwSlaveI2C.RxIdx++;
+                        SwSlaveI2C.RxIdx++;
                         if(SwSlaveI2C.RxIdx >= MAX_I2C_BUFF_SIZE - 1)
                         {
                             SwSlaveI2C.RxIdx = 0;
                         }
-						SwSlaveI2C.RxBuf[SwSlaveI2C.RxIdx] = 0;
-					}
-					else
-					{
-						// 如果是主机读取数据，且ACK接收完毕，则SDA设置成输出，继续发送数据
+                        SwSlaveI2C.RxBuf[SwSlaveI2C.RxIdx] = 0;
+                    }
+                    else
+                    {
+                        // 如果是主机读取数据，且ACK接收完毕，则SDA设置成输出，继续发送数据
                         set_sda_dir(GPIO_DIR_OUT);
 
-						if(SwSlaveI2C.TxBuf[SwSlaveI2C.TxIdx] & 0x80)
-						{
+                        if(SwSlaveI2C.TxBuf[SwSlaveI2C.TxIdx] & 0x80)
+                        {
                             set_sda_pin();
-						}
-						else
-						{
-							clr_sda_pin();
-						}
-					}
-					SwSlaveI2C.State = I2C_STA_DATA;
-					break;
-				case I2C_STA_NACK:		// 如果收到了NACK，则后面将是STOP或者ReSTART信号，需要将SDA设置成输入
-					SwSlaveI2C.SclFallCnt = 0;
+                        }
+                        else
+                        {
+                            clr_sda_pin();
+                        }
+                    }
+                    SwSlaveI2C.State = I2C_STA_DATA;
+                    break;
+                case I2C_STA_NACK:      // 如果收到了NACK，则后面将是STOP或者ReSTART信号，需要将SDA设置成输入
+                    SwSlaveI2C.SclFallCnt = 0;
                     set_sda_dir(GPIO_DIR_IN);
-					break;
-			}
-		}
-		// SCL的上升沿事件处理，此时需要采集数据，而且在数据阶段，SCL高电平时数据必须保持不变
-		else //if(get_scl_state() == PIN_HIGH)
-		{
-			switch(SwSlaveI2C.State)
-			{
-				case I2C_STA_DATA:	// 数据阶段，如果是主机写入数据，则采集比特数据
-					if((I2C_WRITE == SwSlaveI2C.Rw) && (8 > SwSlaveI2C.SclFallCnt))
-					{
-						if(get_sda_state() != PIN_LOW)
-						{
-							SwSlaveI2C.RxBuf[SwSlaveI2C.RxIdx] |= (1 << (7 - SwSlaveI2C.SclFallCnt));
-						}
-					}
-					break;
-				case I2C_STA_ACK:	// 应答阶段，如果是主机读取数据，则判断ACK/NACK信号，默认状态是ACK
-					if((SwSlaveI2C.Rw == I2C_READ) && (get_sda_state() != PIN_LOW))
-					{
-						SwSlaveI2C.State = I2C_STA_NACK;
-					}
-					break;
-			}
-		}
-	}
-	if(is_sda_trig())
-	{
-		clr_sda_rtig_it();
-		if(get_sda_state() == PIN_LOW)
-		{
-			// SCL为高电平时，SDA从高变低，说明是起始信号
-			if(get_scl_state() == PIN_HIGH)
-			{
-				SwSlaveI2C.State = I2C_STA_START;
-			}
-		}
-		else
-		{
-			// SCL为高电平时，SDA从低变高，说明是停止信号，一次I2C通信结束，直接将状态设置成空闲
-			if(get_scl_state() == PIN_HIGH)
-			{
+                    break;
+            }
+        }
+        // SCL的上升沿事件处理，此时需要采集数据，而且在数据阶段，SCL高电平时数据必须保持不变
+        else //if(get_scl_state() == PIN_HIGH)
+        {
+            switch(SwSlaveI2C.State)
+            {
+                case I2C_STA_DATA:  // 数据阶段，如果是主机写入数据，则采集比特数据
+                    if((I2C_WRITE == SwSlaveI2C.Rw) && (8 > SwSlaveI2C.SclFallCnt))
+                    {
+                        if(get_sda_state() != PIN_LOW)
+                        {
+                            SwSlaveI2C.RxBuf[SwSlaveI2C.RxIdx] |= (1 << (7 - SwSlaveI2C.SclFallCnt));
+                        }
+                    }
+                    break;
+                case I2C_STA_ACK:   // 应答阶段，如果是主机读取数据，则判断ACK/NACK信号，默认状态是ACK
+                    if((SwSlaveI2C.Rw == I2C_READ) && (get_sda_state() != PIN_LOW))
+                    {
+                        SwSlaveI2C.State = I2C_STA_NACK;
+                    }
+                    break;
+            }
+        }
+    }
+    if(is_sda_trig())
+    {
+        clr_sda_rtig_it();
+        if(get_sda_state() == PIN_LOW)
+        {
+            // SCL为高电平时，SDA从高变低，说明是起始信号
+            if(get_scl_state() == PIN_HIGH)
+            {
+                SwSlaveI2C.State = I2C_STA_START;
+            }
+        }
+        else
+        {
+            // SCL为高电平时，SDA从低变高，说明是停止信号，一次I2C通信结束，直接将状态设置成空闲
+            if(get_scl_state() == PIN_HIGH)
+            {
                 i2c_sw_action_after_done();
-				SwSlaveI2C.State = I2C_STA_IDLE;
-			}
-		}
-	}
+                SwSlaveI2C.State = I2C_STA_IDLE;
+            }
+        }
+    }
 }
