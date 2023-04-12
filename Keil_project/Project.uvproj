@@ -351,7 +351,7 @@
               <MiscControls></MiscControls>
               <Define>USE_STDPERIPH_DRIVER,GD32F450</Define>
               <Undefine></Undefine>
-              <IncludePath>..\Firmware\CMSIS\GD\GD32F4xx\Include;..\Utilities;..\Firmware\CMSIS;..\;..\Firmware\CMSIS\GD\GD32F4xx\Source\ARM;..\Firmware\GD32F4xx_standard_peripheral\Include;..\Drivers</IncludePath>
+              <IncludePath>..\Firmware\CMSIS\GD\GD32F4xx\Include;..\Utilities;..\Firmware\CMSIS;..\;..\Firmware\CMSIS\GD\GD32F4xx\Source\ARM;..\Firmware\GD32F4xx_standard_peripheral\Include;..\Drivers;..\common</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -410,6 +410,16 @@
           </Files>
         </Group>
         <Group>
+          <GroupName>Common</GroupName>
+          <Files>
+            <File>
+              <FileName>i2c_slave_core.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\common\i2c_slave_core.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
           <GroupName>Drivers</GroupName>
           <Files>
             <File>
@@ -423,9 +433,9 @@
               <FilePath>..\Drivers\delay.c</FilePath>
             </File>
             <File>
-              <FileName>i2c_slave.c</FileName>
+              <FileName>i2c_slave_0.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Drivers\i2c_slave.c</FilePath>
+              <FilePath>..\Drivers\i2c_slave_0.c</FilePath>
             </File>
           </Files>
         </Group>
