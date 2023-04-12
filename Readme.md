@@ -2,29 +2,29 @@
 
 在GD32F450上实现GPIO-I2C-SLAVE，要求2个支持双边沿中断的GPIO。
 
+| 测试平台 | CPU主频 | I2C速率 | 状态 |
+| -------- | ------- | ------- | ---- |
+| GD32F450 | 200M    | 100K    | OK   |
+| GD32F150 | 72M     | 10K     | OK   |
 ## 特性
+
+### 允许多例
+
+核心接口和板级代码已经做分离，一个单片机可以支持n个I2C从设备。
+
+具体见`i2c_slave_0.c`的有关实现以快速拓展n个从设备处理。
+
 
 ### 友好的寄存器空间管理
 
-通过`reg_changed`接口，来快速响应主机的写入请求。
+提供接口支持主机写入寄存器时，对值进行检查，具体见`i2c0_reg_will_changed`的实现。
 
-```c
-void reg_changed(uint8_t reg, uint8_t value)
-{
-    if(reg == 0x00)
-    {
-        i2c_debug("REG 0x00 VALUE CHANGE to [0x%02x]\r\n", value);
-    }
-    if(reg == 0x01)
-    {
-        i2c_debug("REG 0x01 VALUE CHANGE to [0x%02x]\r\n", value);
-    }
-}
-```
+提供接口支持从机主动更新寄存器（参考`i2c0_reg_update_poll`的实现和调用方式）
+
 
 ### 自定义设备地址
 
-修改`i2c_slave.h`中的`SW_SLAVE_ADDR_7BIT`即可。
+修改`i2c_slave_0.h`中的`SW_SLAVE_ADDR_7BIT`即可。
 
 ### 支持连续读写
 
@@ -49,3 +49,4 @@ void reg_changed(uint8_t reg, uint8_t value)
 3、速率建议不超过100K左右；不支持SCL展频。
 
 4、目前SDA、SCL都使用同一个ISR，请在你的实际项目中，检查对应的ISR
+
