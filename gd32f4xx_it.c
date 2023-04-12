@@ -141,5 +141,5 @@ void PendSV_Handler(void)
 void SysTick_Handler(void)
 {
     delay_decrement();
-    i2c_tick_inc(); // 可选的
+    //i2c_tick_inc(); // 可选的
 }

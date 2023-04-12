@@ -1,13 +1,14 @@
 /*!
     \file    main.c
-    \brief   Software I2C-Slave Device
+    \brief   Software I2C-Slave Device Demo
 
     \version 2023-04-10, V1.0.0, init version
+    \version 2023-04-12, V1.0.1, Friendly API
 */
 
 #include "com.h"
 #include "delay.h"
-#include "i2c_slave.h"
+#include "i2c_slave_0.h"
 #include "gd32f4xx.h"
 #include "systick.h"
 #include <stdio.h>
@@ -20,12 +21,12 @@ int main(void)
 
     com_init();
 
-    i2c_sw_slave_init();
+    i2c0_sw_slave_init();
 
     printf("I2C SLAVE IS READY.\r\n");
 
     while(1) {
-        //i2c_sw_check_timeout();
+        i2c0_reg_update_poll();
     }
 }
 
